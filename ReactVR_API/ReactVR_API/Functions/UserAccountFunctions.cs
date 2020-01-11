@@ -5,8 +5,10 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ReactVR_API.Models;
+using ReactVR_API.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,33 +17,21 @@ namespace ReactVR_API.Functions
 {
     public static class UserAccountFunctions
     {
-        public static readonly List<UserAccount> accounts = new List<UserAccount>();
-
         [FunctionName("CreateUserAccount")]
         public static async Task<IActionResult> CreateUserAccount(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "useraccount")] HttpRequest req,
-            ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "useraccount")] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function(CreateUserAccount) processed a request.");
 
-            string name = req.Query["name"];
-
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var userAccountCreateModel = JsonConvert.DeserializeObject<UserAccountCreateModel>(requestBody);
-
-            // valiadate userAccount
-            // save to database table
-            var userAccount = new UserAccount()
-            {
-                Name = userAccountCreateModel.Name,
-                EmailAddress = userAccountCreateModel.EmailAddress,
-                Password = userAccountCreateModel.Password
-            };
+            var userAccount = JsonConvert.DeserializeObject<UserAccount>(requestBody);
 
             try
             {
-                accounts.Add(userAccount);
-                return new OkObjectResult($"Hello, {name}");
+                var userAccountRepo = new UserAccountRepository();
+                var newId = userAccountRepo.CreateUserAccount(userAccount);
+
+                return new OkObjectResult($"UserAccount created with id {newId}.");
             }
             catch (Exception exception)
             {
@@ -49,86 +39,69 @@ namespace ReactVR_API.Functions
             }
         }
 
-        // Do not keep this in, just for learning
-        [FunctionName("GetAllUserAccounts")]
-        public static async Task<IActionResult> GetAllUserAccounts(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "useraccount")] HttpRequest req,
-        ILogger log)
-        {
-            log.LogInformation("C# HTTP trigger function(GetAllUserAccounts) processed a request.");
-
-            return new OkObjectResult(accounts);
-        }
-
-        /// <summary>
-        /// If we call api/useraccount/the id
-        /// </summary>
-        /// <param name="req"></param>
-        /// <param name="log"></param>
-        /// <param name="userAccountId"></param>
-        /// <returns></returns>
         [FunctionName("GetUserAccountByUserAccountId")]
         public static async Task<IActionResult> GetUserAccountByUserAccountId(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "useraccount/{UserAccountId}")] HttpRequest req,
-        ILogger log, Guid userAccountId)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "useraccount/{UserAccountId}")] HttpRequest req, ILogger log, Guid userAccountId)
         {
             log.LogInformation("C# HTTP trigger function(GetUserAccountByUserAccountId) processed a request.");
 
-            // replace with database logic
-            var userAccount = accounts.FirstOrDefault(u => u.UserAccountId == userAccountId);
-            if (userAccount == null)
+            try
             {
-                return new NotFoundResult();
-            }
+                var userAccountRepository = new UserAccountRepository();
+                var userAccount = userAccountRepository.GetUserAccountById(userAccountId);
 
-            return new OkObjectResult(userAccount);
+                if (userAccount == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                return new OkObjectResult(userAccount);
+            }
+            catch (Exception exception)
+            {
+                return new BadRequestObjectResult(exception.Message);
+            }
         }
 
         [FunctionName("UpdateUserAccount")]
         public static async Task<IActionResult> UpdateUserAccount(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "useraccount/{UserAccountId}")] HttpRequest req,
-        ILogger log, Guid userAccountId)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "useraccount")] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function(UpdateUserAccount) processed a request.");
 
-            // replace with database logic
-            var userAccount = accounts.FirstOrDefault(u => u.UserAccountId == userAccountId);
-            if (userAccount == null)
-            {
-                return new NotFoundResult();
-            }
-
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var userAccountUpdateModel = JsonConvert.DeserializeObject<UserAccountUpdateModel>(requestBody);
-            
-            //validate the update model
-            // if validated, update the original
-            // save to db
-            userAccount.Name = userAccountUpdateModel.Name;
-            userAccount.EmailAddress = userAccountUpdateModel.EmailAddress;
-            userAccount.Password = userAccountUpdateModel.Password;
+            var userAccount = JsonConvert.DeserializeObject<UserAccount>(requestBody);
 
-            return new OkResult();
+            try
+            {
+                var userAccountRepo = new UserAccountRepository();
+                userAccountRepo.UpdateUserAccount(userAccount);
+
+                return new OkResult();
+            }
+            catch (Exception exception)
+            {
+                return new BadRequestObjectResult(exception.Message);
+            }     
         }
 
         [FunctionName("DeleteUserAccount")]
         public static async Task<IActionResult> DeleteUserAccount(
-                [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "useraccount/{UserAccountId}")] HttpRequest req,
-                ILogger log, Guid userAccountId)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "useraccount/{UserAccountId}")] HttpRequest req, ILogger log, Guid userAccountId)
         {
             log.LogInformation("C# HTTP trigger function(DeleteUserAccount) processed a request.");
 
-            // replace with database logic
-            var userAccount = accounts.FirstOrDefault(u => u.UserAccountId == userAccountId);
-            if (userAccount == null)
+            try
             {
-                return new NotFoundResult();
+                var userAccountRepo = new UserAccountRepository();
+                var result = userAccountRepo.DeleteUserAccount(userAccountId);
+
+                return new OkObjectResult($"UserAccount({userAccountId}) deleted.");
             }
-
-            accounts.Remove(userAccount);
-            // db layer instead ofc
-
-            return new OkResult();
+            catch (Exception exception)
+            {
+                return new BadRequestObjectResult(exception.Message);
+            }
         }
     }
 }

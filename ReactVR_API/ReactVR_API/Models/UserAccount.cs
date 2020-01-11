@@ -6,7 +6,7 @@ namespace ReactVR_API.Models
 {
     public class UserAccount
     {
-        public Guid UserAccountId { get; set; } = Guid.NewGuid();
+        public Guid UserAccountId { get; set; } 
         public string Name { get; set; }
         public string EmailAddress { get; set; }
         public string Password { get; set; }
