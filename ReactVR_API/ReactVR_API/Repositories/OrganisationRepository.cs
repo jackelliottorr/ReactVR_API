@@ -39,5 +39,35 @@ namespace ReactVR_API.Repositories
                 return organisation;
             }
         }
+
+        public void UpdateOrganisation(Organisation organisation)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new
+                {
+                    organisation.OrganisationName
+                };
+
+                var sql = SqlCrudHelper.GetUpdateStatement(parameters, organisation.GetType().Name);
+                sql += " WHERE OrganisationId = @OrganisationId";
+
+                db.Execute(sql, organisation);
+            }
+        }
+
+        public void DeleteOrganisation(Guid organisationId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new
+                {
+                    OrganisationId = organisationId
+                };
+                var sql = "update organisation set [IsDeleted] = 1 WHERE [OrganisationId] = @OrganisationId";
+
+                db.Execute(sql, parameters);
+            }
+        }
     }
 }

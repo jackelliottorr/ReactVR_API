@@ -54,5 +54,46 @@ namespace ReactVR_API.Functions
                 return new BadRequestObjectResult(exception.Message);
             }
         }
+
+        [FunctionName("UpdateOrganisation")]
+        public static async Task<IActionResult> UpdateOrganisation(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "organisation")] HttpRequest req, ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function(UpdateOrganisation) processed a request.");
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var organisation = JsonConvert.DeserializeObject<Organisation>(requestBody);
+
+            try
+            {
+                var organisationRepo = new OrganisationRepository();
+                organisationRepo.UpdateOrganisation(organisation);
+
+                return new OkObjectResult($"Updated {organisation.OrganisationName}.");
+            }
+            catch (Exception exception)
+            {
+                return new BadRequestObjectResult(exception.Message);
+            }
+        }
+
+        [FunctionName("DeleteOrganisation")]
+        public static async Task<IActionResult> DeleteOrganisation(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "organisation/{OrganisationId}")] HttpRequest req, ILogger log, Guid organisationId)
+        {
+            log.LogInformation("C# HTTP trigger function(DeleteOrganisation) processed a request.");
+
+            try
+            {
+                var organisationRepo = new OrganisationRepository();
+                organisationRepo.DeleteOrganisation(organisationId);
+
+                return new OkObjectResult($"Deleted {organisationId}");
+            }
+            catch (Exception exception)
+            {
+                return new BadRequestObjectResult(exception.Message);
+            }
+        }
     }
 }
