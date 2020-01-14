@@ -18,7 +18,8 @@ namespace ReactVR_API.Repositories
                 {
                     organisationMembership.OrganisationId,
                     organisationMembership.UserAccountId,
-                    organisationMembership.UserTypeId
+                    organisationMembership.UserTypeId,
+                    organisationMembership.OrganisationInviteId
                 };
 
                 var sql = SqlCrudHelper.GetInsertStatement(parameters, organisationMembership.GetType().Name, "OrganisationMembershipId");
