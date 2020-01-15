@@ -9,6 +9,7 @@ namespace ReactVR_API.Models
         public Guid UserAccountId { get; set; }
         public Guid LevelConfigurationId { get; set; }
         public int Score { get; set; }
+        public DateTime CreatedDate { get; set; }
         public bool IsDeleted { get; set; }
     }
 }
