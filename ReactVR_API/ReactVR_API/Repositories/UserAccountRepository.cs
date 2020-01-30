@@ -17,7 +17,8 @@ namespace ReactVR_API.Repositories
                     userAccount.UserAccountId,
                     userAccount.Name,
                     userAccount.EmailAddress,
-                    userAccount.Password,
+                    userAccount.Salt,
+                    userAccount.Hash,
                     userAccount.CreatedDate,
                     userAccount.IsDeleted
                 };
@@ -42,6 +43,18 @@ namespace ReactVR_API.Repositories
             }
         }
 
+        internal UserAccount GetUserAccountByEmailAddress(string emailAddress)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new { EmailAddress = emailAddress };
+                var sql = "select * from useraccount where emailaddress = @EmailAddress";
+
+                var userAccount = db.QuerySingle<UserAccount>(sql, parameters);
+                return userAccount;
+            }
+        }
+
         public void UpdateUserAccount(UserAccount userAccount)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -50,7 +63,8 @@ namespace ReactVR_API.Repositories
                 {
                     userAccount.Name,
                     userAccount.EmailAddress,
-                    userAccount.Password,
+                    userAccount.Salt,
+                    userAccount.Hash
                 };
 
                 var sql = SqlCrudHelper.GetUpdateStatement(parameters, userAccount.GetType().Name);
@@ -75,6 +89,23 @@ namespace ReactVR_API.Repositories
 
                 var boolResult = result == 1 ? true : false;
                 return boolResult;
+            }
+        }
+
+        public bool AccountExists(string emailAddress)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new { EmailAddress = emailAddress };
+                var sql = "select case when exists (";
+                sql += " select * from [UserAccount] where [EmailAddress] = @EmailAddress)";     
+                sql += " THEN CAST(1 AS BIT)";
+                sql += " ELSE CAST(0 AS BIT) END";
+
+                int result = db.QuerySingle<int>(sql, parameters);
+
+                bool accountExists = result == 1 ? true : false;
+                return accountExists;
             }
         }
     }
