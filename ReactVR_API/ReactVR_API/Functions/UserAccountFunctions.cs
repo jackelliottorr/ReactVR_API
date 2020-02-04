@@ -5,7 +5,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ReactVR_API.HelperClasses;
-using ReactVR_API.Models;
+using ReactVR_CORE.Models;
 using ReactVR_API.Repositories;
 using ReactVR_API.Security.AccessTokens;
 using System;
@@ -14,6 +14,8 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using ReactVR_API.Security.Login;
 
 namespace ReactVR_API.Functions
 {
@@ -45,15 +47,15 @@ namespace ReactVR_API.Functions
 
         [FunctionName("CreateUserAccount")]
         public async Task<IActionResult> CreateUserAccount(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UserAccount/Create")] HttpRequest req, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UserAccount/CreateUserAccount")] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function(CreateUserAccount) processed a request.");
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var userAccountCreateModel = JsonConvert.DeserializeObject<UserAccountCreateModel>(requestBody);
-
             try
             {
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var userAccountCreateModel = JsonConvert.DeserializeObject<UserAccountCreateModel>(requestBody);
+
                 // first check if username already exists
                 var loginManager = new LoginManager();
 
@@ -95,32 +97,28 @@ namespace ReactVR_API.Functions
         {
             log.LogInformation("C# HTTP trigger function(Login) processed a request.");
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var userAccountCreateModel = JsonConvert.DeserializeObject<UserAccountCreateModel>(requestBody);
-
             try
             {
-                // check if account exists
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var userAccountCreateModel = JsonConvert.DeserializeObject<UserAccountCreateModel>(requestBody);
+
                 var loginManager = new LoginManager();
+                var loginResult = loginManager.AttemptLogin(userAccountCreateModel.EmailAddress, userAccountCreateModel.Password);
 
-                if (!loginManager.AccountExists(userAccountCreateModel.EmailAddress))
+                if (loginResult.Status == LoginStatus.Success)
                 {
-                    return new NotFoundResult();
+                    var userAccountRepo = new UserAccountRepository();
+                    userAccountRepo.DeleteUserAccount(loginResult.UserAccount.UserAccountId);
+
+                    // return JWT with UserAccountId
+                    var jwt = _tokenCreator.CreateToken(loginResult.UserAccount.UserAccountId);
+                    return new OkObjectResult(jwt);
                 }
-
-                // get UserAccount from database using the EmailAdress (to get salt & hash)
-                var userAccountRepo = new UserAccountRepository();
-                var userAccount = userAccountRepo.GetUserAccountByEmailAddress(userAccountCreateModel.EmailAddress);
-
-                // validate password against salt & hash
-                if (!PasswordManager.ValidatePassword(userAccountCreateModel.Password, userAccount.Salt, userAccount.Hash))
+                else
                 {
-                    return new BadRequestObjectResult("Wrong password");
+                    // maybe change this so there's only 1 fail condition instead of having Error & Failure
+                    return new BadRequestObjectResult(loginResult.FailureReason);
                 }
-
-                // return JWT with UserAccountId
-                var jwt = _tokenCreator.CreateToken(userAccount.UserAccountId);
-                return new OkObjectResult(jwt);
             }
             catch (Exception exception)
             {
@@ -128,30 +126,29 @@ namespace ReactVR_API.Functions
             }
         }
 
+        //[FunctionName("GetUserAccountByUserAccountId")]
+        //public async Task<IActionResult> GetUserAccountByUserAccountId(
+        //[HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "useraccount/{UserAccountId}")] HttpRequest req, ILogger log, Guid userAccountId)
+        //{
+        //    log.LogInformation("C# HTTP trigger function(GetUserAccountByUserAccountId) processed a request.");
 
-        [FunctionName("GetUserAccountByUserAccountId")]
-        public async Task<IActionResult> GetUserAccountByUserAccountId(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "useraccount/{UserAccountId}")] HttpRequest req, ILogger log, Guid userAccountId)
-        {
-            log.LogInformation("C# HTTP trigger function(GetUserAccountByUserAccountId) processed a request.");
+        //    try
+        //    {
+        //        var userAccountRepository = new UserAccountRepository();
+        //        var userAccount = userAccountRepository.GetUserAccountById(userAccountId);
 
-            try
-            {
-                var userAccountRepository = new UserAccountRepository();
-                var userAccount = userAccountRepository.GetUserAccountById(userAccountId);
+        //        if (userAccount == null)
+        //        {
+        //            return new NotFoundResult();
+        //        }
 
-                if (userAccount == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                return new OkObjectResult(userAccount);
-            }
-            catch (Exception exception)
-            {
-                return new BadRequestObjectResult(exception.Message);
-            }
-        }
+        //        return new OkObjectResult(userAccount);
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        return new BadRequestObjectResult(exception.Message);
+        //    }
+        //}
 
         /// <summary>
         /// haven't had to change attributes/parameters since we inject the tokenprovider
@@ -161,26 +158,28 @@ namespace ReactVR_API.Functions
         /// <returns></returns>
         [FunctionName("UpdateUserAccount")]
         public async Task<IActionResult> UpdateUserAccount(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "useraccount")] HttpRequest req, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "UserAccount/UpdateUserAccount")] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function(UpdateUserAccount) processed a request.");
 
-            // validate token
-            var result = _tokenProvider.ValidateToken(req);
+            var accessTokenResult = _tokenProvider.ValidateToken(req);
 
-            // continue with function code if valid, otherwise return unauthorized
-            if (result.Status == AccessTokenStatus.Valid)
+            if (accessTokenResult.Status == AccessTokenStatus.Valid)
             {
-                // log successful request
-                log.LogInformation($"Request received for {result.Principal.Identity.Name}.");
-
-                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                var userAccount = JsonConvert.DeserializeObject<UserAccount>(requestBody);
-
                 try
                 {
+                    var userAccountId = accessTokenResult.Principal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+                    log.LogInformation($"JWT validated for UserAccount: {userAccountId}.");
+
+                    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                    var updateModel = JsonConvert.DeserializeObject<UserAccountUpdateModel>(requestBody);
+
                     var userAccountRepo = new UserAccountRepository();
-                    userAccountRepo.UpdateUserAccount(userAccount);
+                    var userAccount = userAccountRepo.GetUserAccountById(new Guid(userAccountId));
+
+                    ModelUpdater.CopyProperties(updateModel, userAccount);
+
+                    bool updated = userAccountRepo.UpdateUserAccount(userAccount);
 
                     return new OkResult();
                 }
@@ -197,16 +196,30 @@ namespace ReactVR_API.Functions
 
         [FunctionName("DeleteUserAccount")]
         public async Task<IActionResult> DeleteUserAccount(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "useraccount/{UserAccountId}")] HttpRequest req, ILogger log, Guid userAccountId)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "UserAccount/DeleteUserAccount")] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function(DeleteUserAccount) processed a request.");
 
             try
             {
-                var userAccountRepo = new UserAccountRepository();
-                var result = userAccountRepo.DeleteUserAccount(userAccountId);
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var userAccountCreateModel = JsonConvert.DeserializeObject<UserAccountCreateModel>(requestBody);
+                
+                var loginManager = new LoginManager();
+                var loginResult = loginManager.AttemptLogin(userAccountCreateModel.EmailAddress, userAccountCreateModel.Password);
 
-                return new OkObjectResult($"UserAccount({userAccountId}) deleted.");
+                if (loginResult.Status == LoginStatus.Success)
+                {
+                    var userAccountRepo = new UserAccountRepository();
+                    userAccountRepo.DeleteUserAccount(loginResult.UserAccount.UserAccountId);
+
+                    return new OkObjectResult($"User {loginResult.UserAccount.EmailAddress}) has been deleted.");
+                }
+                else
+                {
+                    // maybe change this so there's only 1 fail condition instead of having Error & Failure
+                    return new BadRequestObjectResult(loginResult.FailureReason);
+                }
             }
             catch (Exception exception)
             {

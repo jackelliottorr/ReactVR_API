@@ -7,9 +7,9 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using ReactVR_API.Models;
 using ReactVR_API.Repositories;
 using System.Collections.Generic;
+using ReactVR_CORE.Models;
 
 namespace ReactVR_API.Functions
 {

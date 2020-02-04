@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using ReactVR_API.HelperClasses;
-using ReactVR_API.Models;
+using ReactVR_CORE.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;

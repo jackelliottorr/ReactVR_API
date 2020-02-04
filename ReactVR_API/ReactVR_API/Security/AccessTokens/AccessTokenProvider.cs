@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Http;
+using System.Text;
 
 namespace ReactVR_API.Security.AccessTokens
 {
@@ -45,7 +46,7 @@ namespace ReactVR_API.Security.AccessTokens
                         ValidateIssuer = true,
                         ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_issuerToken))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_issuerToken))
                     };
 
                     // Validate the token

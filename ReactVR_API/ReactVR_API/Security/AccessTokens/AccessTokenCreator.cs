@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using ReactVR_API.Models;
+using ReactVR_CORE.Models;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -47,7 +47,9 @@ namespace ReactVR_API.Security.AccessTokens
                 expires: DateTime.Now.AddMonths(1),
                 signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var handler = new JwtSecurityTokenHandler();
+            var securityToken = handler.WriteToken(token);
+            return securityToken;
         }
     }
 }

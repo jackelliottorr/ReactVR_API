@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibrary1", "ClassLibra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactVR_UnitTesting", "ReactVR_UnitTesting\ReactVR_UnitTesting.csproj", "{C71DF65F-FD66-45FF-84FB-7AE21E4D3354}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactVR_CORE", "ReactVR_CORE\ReactVR_CORE.csproj", "{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C71DF65F-FD66-45FF-84FB-7AE21E4D3354}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C71DF65F-FD66-45FF-84FB-7AE21E4D3354}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C71DF65F-FD66-45FF-84FB-7AE21E4D3354}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

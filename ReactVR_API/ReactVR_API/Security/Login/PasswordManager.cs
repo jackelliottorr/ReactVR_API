@@ -3,7 +3,7 @@ using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace ReactVR_API.HelperClasses
+namespace ReactVR_API.Security.Login
 {
     public class PasswordManager
     {

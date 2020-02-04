@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReactVR_API.Models
+namespace ReactVR_CORE.Models
 {
     public class UserAccount
     {

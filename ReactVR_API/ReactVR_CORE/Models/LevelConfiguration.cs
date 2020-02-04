@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ReactVR_API.Models
+namespace ReactVR_CORE.Models
 {
     public class LevelConfiguration
     {

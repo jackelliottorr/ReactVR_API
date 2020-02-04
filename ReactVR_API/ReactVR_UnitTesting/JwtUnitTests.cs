@@ -5,31 +5,99 @@ using System.Net;
 using System.Text;
 using Xunit;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ReactVR_UnitTesting
 {
     public class JwtUnitTests
     {
         [Fact]
-        public void TestLogin()
+        public void TestTokenSuccessfulValidation()
         {
             // Arrange
-            var jwt = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImRhOTY2YTRhLTgxOTAtNDZjOC04OTk4LTEyMzQ2M2Q4ODgwOCIsImV4cCI6MTU4MjkzNTM5OCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzA3MSIsImF1ZCI6Ik15QXVkaWVuY2UifQ.Q61310iT - VI0a7lqHnJqx01KPtMBpQCI_6DahtFZwBg";
-            var issuerToken = "0844AB5B0222F2E5D497BAC5FAF6CCD573E1C8BF1DF267F5B507F8EC985578D8";
+            var key = "0844AB5B0222F2E5D497BAC5FAF6CCD573E1C8BF1DF267F5B507F8EC985578D8";
             var audience = "https://localhost:7071";
             var issuer = "MyAudience";
 
-            var tokenProvider = new AccessTokenProvider(issuerToken, audience, issuer);
+            var tokenCreator = new AccessTokenCreator(key, audience, issuer);
+            var newToken = tokenCreator.CreateToken(Guid.NewGuid());
 
-            //var req = WebRequest.Create("");
-            //var request = new Microsoft.AspNetCore.Http.HttpRequest();
-            //req.Headers[""] = "";
+            // Act
+            bool validated = false;
 
+            try
+            {    
+                // Create the parameters
+                var tokenParams = new TokenValidationParameters()
+                {
+                    RequireSignedTokens = true,
+                    ValidAudience = audience,
+                    ValidateAudience = true,
+                    ValidIssuer = issuer,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+                };
 
-            //// Act
-            //tokenProvider.ValidateToken(req);
+                // Validate the token
+                var handler = new JwtSecurityTokenHandler();
+                var result = handler.ValidateToken(newToken, tokenParams, out var securityToken);
+                validated = true;
+            }
+            catch (Exception ex)
+            {
+                validated = false;
+            }
+
             // Assert
+            Assert.True(validated);
+        }
 
+        [Fact]
+        public void TestTokenFailedValidation()
+        {
+            // Arrange
+            var key = "0844AB5B0222F2E5D497BAC5FAF6CCD573E1C8BF1DF267F5B507F8EC985578D8";
+            var audience = "https://localhost:7071";
+            var issuer = "MyAudience";
+
+            var tokenCreator = new AccessTokenCreator(key, audience, issuer);
+            var newToken = tokenCreator.CreateToken(Guid.NewGuid());
+
+            key = "0844AB5B0222F2E5D497BAC5FAF6CCD573E1C8BF1DF267F5B507F8EC985578D7";
+
+            // Act
+            bool validated = false;
+
+            try
+            {
+                // Create the parameters
+                var tokenParams = new TokenValidationParameters()
+                {
+                    RequireSignedTokens = true,
+                    ValidAudience = audience,
+                    ValidateAudience = true,
+                    ValidIssuer = issuer,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+                };
+
+                // Validate the token
+                var handler = new JwtSecurityTokenHandler();
+                var result = handler.ValidateToken(newToken, tokenParams, out var securityToken);
+                validated = true;
+            }
+            catch (Exception ex)
+            {
+                validated = false;
+            }
+
+            //Assert
+            Assert.False(validated);
         }
     }
 }

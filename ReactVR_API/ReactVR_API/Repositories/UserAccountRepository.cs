@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using ReactVR_API.HelperClasses;
-using ReactVR_API.Models;
+using ReactVR_CORE.Models;
 using System;
 using System.Data.SqlClient;
 
@@ -55,7 +55,7 @@ namespace ReactVR_API.Repositories
             }
         }
 
-        public void UpdateUserAccount(UserAccount userAccount)
+        public bool UpdateUserAccount(UserAccount userAccount)
         {
             using (var db = new SqlConnection(_connectionString))
             {
@@ -70,11 +70,10 @@ namespace ReactVR_API.Repositories
                 var sql = SqlCrudHelper.GetUpdateStatement(parameters, userAccount.GetType().Name);
                 sql += " WHERE UserAccountId = @UserAccountId";
 
-                db.Execute(sql, userAccount);
+                var result = db.Execute(sql, userAccount);
 
-                //var result = db.Execute(sql, userAccount);
-                //var boolResult = result == 1 ? true : false;
-                //return boolResult;
+                var boolResult = result == 1 ? true : false;
+                return boolResult;
             }
         }
 
@@ -83,7 +82,7 @@ namespace ReactVR_API.Repositories
             using (var db = new SqlConnection(_connectionString))
             {
                 var parameters = new { UserAccountId = userAccountId };
-                var sql = "update useraccount set [IsDeleted] = 1 where [UserAccountId] = @UserAccountId";
+                var sql = "delete from useraccount where [UserAccountId] = @UserAccountId";
                 
                 var result = db.Execute(sql, parameters);
 
