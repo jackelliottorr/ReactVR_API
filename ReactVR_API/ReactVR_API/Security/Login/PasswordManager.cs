@@ -7,6 +7,13 @@ namespace ReactVR_API.Security.Login
 {
     public class PasswordManager
     {
+        /// <summary>
+        /// Hashs the password with our generated salt and returns the hash
+        /// These can both then be saved in the database
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="salt"></param>
+        /// <returns>Hashed password</returns>
         public static string HashPassword(string password, string salt)
         {
             var valueBytes = KeyDerivation.Pbkdf2(
@@ -22,6 +29,10 @@ namespace ReactVR_API.Security.Login
         public static bool ValidatePassword(string value, string salt, string hash)
             => HashPassword(value, salt) == hash;
 
+        /// <summary>
+        /// Generate a unique, cryptographically-strong salt
+        /// </summary>
+        /// <returns>Salt</returns>
         public static string GenerateSalt()
         {
             byte[] randomBytes = new byte[128 / 8];

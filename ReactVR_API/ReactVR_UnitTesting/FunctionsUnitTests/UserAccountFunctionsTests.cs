@@ -31,6 +31,25 @@ namespace ReactVR_UnitTesting.FunctionsUnitTests
 
             Assert.Contains("Email Address updated to", response.Value.ToString());
         }
+
+        [Fact]
+        public async void ChangePassword()
+        {
+            var createModel = new
+            {
+                Name = "Jack",
+                EmailAddress = "newEmailAddress@test.com",
+                Password = "password",
+                NewPassword = "password1",
+            };
+
+            Mock<HttpRequest> mockRequest = MoqHelper.CreateMockRequest(createModel);
+
+            var userAccountFunctions = new UserAccountFunctions();
+            var response = (OkObjectResult)await userAccountFunctions.ChangePassword(mockRequest.Object, logger);
+
+            Assert.Contains("Password updated.", response.Value.ToString());
+        }
     } 
 }
 

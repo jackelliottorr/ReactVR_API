@@ -58,7 +58,6 @@ namespace ReactVR_API.Functions
 
                 // first check if username already exists
                 var loginManager = new LoginManager();
-
                 if (loginManager.AccountExists(userAccountCreateModel.EmailAddress))
                 {
                     return new BadRequestObjectResult("An account with this email address already exists.");
@@ -228,6 +227,45 @@ namespace ReactVR_API.Functions
                     userAccountRepo.UpdateUserAccount(loginResult.UserAccount);
 
                     return new OkObjectResult($"Email Address updated to {userAccountUpdateModel.NewEmailAdress}).");
+                }
+                else
+                {
+                    // maybe change this so there's only 1 fail condition instead of having Error & Failure
+                    return new BadRequestObjectResult(loginResult.FailureReason);
+                }
+            }
+            catch (Exception exception)
+            {
+                return new BadRequestObjectResult(exception.Message);
+            }
+        }
+
+        [FunctionName("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UserAccount/ChangePassword")] HttpRequest req, ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function(ChangePassword) processed a request.");
+
+            try
+            {
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var userAccountUpdateModel = JsonConvert.DeserializeObject<UserAccountUpdateModel>(requestBody);
+
+                var loginManager = new LoginManager();
+                var loginResult = loginManager.AttemptLogin(userAccountUpdateModel.EmailAddress, userAccountUpdateModel.Password);
+
+                if (loginResult.Status == LoginStatus.Success)
+                {
+                    var salt = PasswordManager.GenerateSalt();
+                    var hash = PasswordManager.HashPassword(userAccountUpdateModel.NewPassword, salt);
+
+                    loginResult.UserAccount.Salt = salt;
+                    loginResult.UserAccount.Hash = hash;
+
+                    var userAccountRepo = new UserAccountRepository();
+                    userAccountRepo.UpdateUserAccount(loginResult.UserAccount);
+
+                    return new OkObjectResult($"Password updated.");
                 }
                 else
                 {
