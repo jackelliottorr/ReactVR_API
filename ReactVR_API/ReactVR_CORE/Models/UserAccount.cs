@@ -21,19 +21,28 @@ namespace ReactVR_CORE.Models
         public bool IsDeleted { get; set; } = false;
     }
 
-
     public class UserAccountCreateModel
     {
         public string Name { get; set; }
         public string EmailAddress { get; set; }
+
         public string Password { get; set; }
     }
 
-
+    /// <summary>
+    /// For updating the UserAccount
+    /// Still requires EmailAddress & Password since the current ones will be required for authorisation
+    /// </summary>
     public class UserAccountUpdateModel
     {
         public string Name { get; set; }
+
         public string EmailAddress { get; set; }
+
+        public string NewEmailAdress { get; set; }
+
         public string Password { get; set; }
+
+        public string NewPassword { get; set; }
     }
 }

@@ -126,36 +126,6 @@ namespace ReactVR_API.Functions
             }
         }
 
-        //[FunctionName("GetUserAccountByUserAccountId")]
-        //public async Task<IActionResult> GetUserAccountByUserAccountId(
-        //[HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "useraccount/{UserAccountId}")] HttpRequest req, ILogger log, Guid userAccountId)
-        //{
-        //    log.LogInformation("C# HTTP trigger function(GetUserAccountByUserAccountId) processed a request.");
-
-        //    try
-        //    {
-        //        var userAccountRepository = new UserAccountRepository();
-        //        var userAccount = userAccountRepository.GetUserAccountById(userAccountId);
-
-        //        if (userAccount == null)
-        //        {
-        //            return new NotFoundResult();
-        //        }
-
-        //        return new OkObjectResult(userAccount);
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        return new BadRequestObjectResult(exception.Message);
-        //    }
-        //}
-
-        /// <summary>
-        /// haven't had to change attributes/parameters since we inject the tokenprovider
-        /// </summary>
-        /// <param name="req"></param>
-        /// <param name="log"></param>
-        /// <returns></returns>
         [FunctionName("UpdateUserAccount")]
         public async Task<IActionResult> UpdateUserAccount(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "UserAccount/UpdateUserAccount")] HttpRequest req, ILogger log)
@@ -214,6 +184,50 @@ namespace ReactVR_API.Functions
                     userAccountRepo.DeleteUserAccount(loginResult.UserAccount.UserAccountId);
 
                     return new OkObjectResult($"User {loginResult.UserAccount.EmailAddress}) has been deleted.");
+                }
+                else
+                {
+                    // maybe change this so there's only 1 fail condition instead of having Error & Failure
+                    return new BadRequestObjectResult(loginResult.FailureReason);
+                }
+            }
+            catch (Exception exception)
+            {
+                return new BadRequestObjectResult(exception.Message);
+            }
+        }
+
+        [FunctionName("ChangeEmailAddress")]
+        public async Task<IActionResult> ChangeEmailAddress(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UserAccount/ChangeEmailAddress")] HttpRequest req, ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function(ChangeEmailAddress) processed a request.");
+
+            try
+            {
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var userAccountUpdateModel = JsonConvert.DeserializeObject<UserAccountUpdateModel>(requestBody);
+                
+                var loginManager = new LoginManager();
+                var loginResult = loginManager.AttemptLogin(userAccountUpdateModel.EmailAddress, userAccountUpdateModel.Password);
+
+                if (loginResult.Status == LoginStatus.Success)
+                {
+                    // Make sure the email address is not already in use
+                    if (loginManager.AccountExists(userAccountUpdateModel.NewEmailAdress))
+                    {
+                        return new BadRequestObjectResult("Email Address is already in use.");
+                    }
+                    else
+                    {
+                        loginResult.UserAccount.EmailAddress = userAccountUpdateModel.NewEmailAdress;
+                    }
+
+                    // Update the UserAccount with the new value
+                    var userAccountRepo = new UserAccountRepository();
+                    userAccountRepo.UpdateUserAccount(loginResult.UserAccount);
+
+                    return new OkObjectResult($"Email Address updated to {userAccountUpdateModel.NewEmailAdress}).");
                 }
                 else
                 {
