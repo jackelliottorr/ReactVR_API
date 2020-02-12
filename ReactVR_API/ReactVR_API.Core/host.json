@@ -1,0 +1,18 @@
+{
+  "version": "2.0",
+
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "IssuerToken": "4716915EDA396858D61992CB3DB830C95B4E7EC5DB50A8896658753CE9ACA3D0",
+    "Audience": "MyAudience",
+    "Issuer": "http://localhost:7071/",
+    "ReactVR_DatabaseConnectionString": "Data Source=JACKSPC\\MSSQLSERVER2019;Integrated Security=True;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "*",
+    "CORSCredentials": false
+  }
+}

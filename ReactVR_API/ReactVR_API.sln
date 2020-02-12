@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29519.181
+VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactVR_API", "ReactVR_API\ReactVR_API.csproj", "{93F8FC9D-4572-4008-8ADB-EF8E746A5C79}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactVR_API.Core", "ReactVR_API.Core\ReactVR_API.Core.csproj", "{8EE4A762-764C-4DE9-95DC-44C97D464A20}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibrary1", "ClassLibrary1\ClassLibrary1.csproj", "{7A1276D5-E15B-474C-97AA-96F2991B3EF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactVR_API.Common", "ReactVR_API.Common\ReactVR_API.Common.csproj", "{A1D718CC-03E1-4F97-BAFE-3FF50DA9C0E9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactVR_UnitTesting", "ReactVR_UnitTesting\ReactVR_UnitTesting.csproj", "{C71DF65F-FD66-45FF-84FB-7AE21E4D3354}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactVR_CORE", "ReactVR_CORE\ReactVR_CORE.csproj", "{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactVR_API.UnitTesting", "ReactVR_API.UnitTesting\ReactVR_API.UnitTesting.csproj", "{F97CA635-A6D5-4C49-B265-826C8E8317C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,27 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{93F8FC9D-4572-4008-8ADB-EF8E746A5C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93F8FC9D-4572-4008-8ADB-EF8E746A5C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93F8FC9D-4572-4008-8ADB-EF8E746A5C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93F8FC9D-4572-4008-8ADB-EF8E746A5C79}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7A1276D5-E15B-474C-97AA-96F2991B3EF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A1276D5-E15B-474C-97AA-96F2991B3EF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A1276D5-E15B-474C-97AA-96F2991B3EF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A1276D5-E15B-474C-97AA-96F2991B3EF0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C71DF65F-FD66-45FF-84FB-7AE21E4D3354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C71DF65F-FD66-45FF-84FB-7AE21E4D3354}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C71DF65F-FD66-45FF-84FB-7AE21E4D3354}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C71DF65F-FD66-45FF-84FB-7AE21E4D3354}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66A7F1A3-79DF-47F9-9ECA-8CB6C31452A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EE4A762-764C-4DE9-95DC-44C97D464A20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EE4A762-764C-4DE9-95DC-44C97D464A20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EE4A762-764C-4DE9-95DC-44C97D464A20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EE4A762-764C-4DE9-95DC-44C97D464A20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1D718CC-03E1-4F97-BAFE-3FF50DA9C0E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1D718CC-03E1-4F97-BAFE-3FF50DA9C0E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1D718CC-03E1-4F97-BAFE-3FF50DA9C0E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1D718CC-03E1-4F97-BAFE-3FF50DA9C0E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F97CA635-A6D5-4C49-B265-826C8E8317C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F97CA635-A6D5-4C49-B265-826C8E8317C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F97CA635-A6D5-4C49-B265-826C8E8317C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F97CA635-A6D5-4C49-B265-826C8E8317C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1F29C5F1-5AF8-4DA3-923E-2B5AA76472F4}
+		SolutionGuid = {826069BD-2194-426B-A645-E1B6D7791176}
 	EndGlobalSection
 EndGlobal
