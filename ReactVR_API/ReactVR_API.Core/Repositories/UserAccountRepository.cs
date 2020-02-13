@@ -50,7 +50,7 @@ namespace ReactVR_API.Core.Repositories
                 var parameters = new { EmailAddress = emailAddress };
                 var sql = "select * from useraccount where emailaddress = @EmailAddress";
 
-                var userAccount = db.QuerySingle<UserAccount>(sql, parameters);
+                var userAccount = db.QuerySingleOrDefault<UserAccount>(sql, parameters);
                 return userAccount;
             }
         }

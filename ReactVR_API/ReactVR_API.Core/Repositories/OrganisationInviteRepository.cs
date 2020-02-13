@@ -18,7 +18,8 @@ namespace ReactVR_API.Core.Repositories
                 {
                     organisationInvite.OrganisationId,
                     organisationInvite.InvitedById,
-                    organisationInvite.InviteUserType,
+                    organisationInvite.InviteeId,
+                    organisationInvite.InviteUserType
                 };
 
                 var sql = SqlCrudHelper.GetInsertStatement(parameters, organisationInvite.GetType().Name, "OrganisationInviteId");
@@ -26,6 +27,19 @@ namespace ReactVR_API.Core.Repositories
                 Guid newId = db.ExecuteScalar<Guid>(sql, parameters);
 
                 return newId;
+            }
+        }
+
+        public List<OrganisationInvite> GetInvitesForUser(Guid userAccountId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new { InviteeId = userAccountId };
+                var sql = "select * from organisationinvite where inviteeid = @inviteeid and isused = 0";
+
+                var results = db.QuerySingleOrDefault(sql, parameters);
+
+                return results;
             }
         }
 

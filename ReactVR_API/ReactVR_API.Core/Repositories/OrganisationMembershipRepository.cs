@@ -18,7 +18,7 @@ namespace ReactVR_API.Core.Repositories
                 {
                     organisationMembership.OrganisationId,
                     organisationMembership.UserAccountId,
-                    organisationMembership.UserTypeId,
+                    organisationMembership.UserType,
                     organisationMembership.OrganisationInviteId
                 };
 
@@ -66,7 +66,7 @@ namespace ReactVR_API.Core.Repositories
             {
                 var parameters = new
                 {
-                    organisationMembership.UserTypeId
+                    organisationMembership.UserType
                 };
 
                 var sql = SqlCrudHelper.GetUpdateStatement(parameters, organisationMembership.GetType().Name);
@@ -91,6 +91,28 @@ namespace ReactVR_API.Core.Repositories
                 var sql = "update organisationMembership set [IsDeleted] = 1 WHERE [OrganisationMembershipId] = @OrganisationMembershipId";
 
                 db.Execute(sql, parameters);
+            }
+        }
+
+        public bool AlreadyHasAMembershipInOrganisation(Guid userAccountId, Guid organisationId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new
+                {
+                    UserAccountId = userAccountId,
+                    OrganisationId = organisationId
+                };
+
+                var sql = "select case when exists " +
+                "(select * from organisationmembership where useraccountid = @UserAccountId and organisationid = @OrganisationId) " +
+                "THEN CAST(1 AS BIT)" +
+                "ELSE CAST(0 AS BIT) END";
+
+                int result = db.QuerySingle<int>(sql, parameters);
+
+                bool accountExists = result == 1 ? true : false;
+                return accountExists;
             }
         }
     }

@@ -78,7 +78,7 @@ namespace ReactVR_API.Core.Functions
                     {
                         OrganisationId = organisationId,
                         UserAccountId = userAccountId,
-                        UserTypeId = UserType.OrganisationOwner,
+                        UserType = UserType.OrganisationOwner,
                         OrganisationInviteId = null
                     };
 
@@ -263,7 +263,7 @@ namespace ReactVR_API.Core.Functions
                 var organisationMembershipRepository = new OrganisationMembershipRepository();
                 var organisationMembership = organisationMembershipRepository.GetOrganisationMembership(userAccountId, organisationId);
 
-                if (organisationMembership.UserTypeId == UserType.OrganisationOwner)
+                if (organisationMembership.UserType == UserType.OrganisationOwner)
                 {
                     var organisationRepo = new OrganisationRepository();
                     bool deleted = organisationRepo.DeleteOrganisation(organisationId);
