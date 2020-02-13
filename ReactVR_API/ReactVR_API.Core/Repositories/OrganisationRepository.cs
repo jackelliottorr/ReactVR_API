@@ -28,7 +28,7 @@ namespace ReactVR_API.Core.Repositories
             }
         }
 
-        public Organisation GetOrganisationByOrganisationId(Guid organisationId)
+        public Organisation GetOrganisationById(Guid organisationId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
@@ -59,7 +59,7 @@ namespace ReactVR_API.Core.Repositories
             return organisations;
         }
 
-        public void UpdateOrganisation(Organisation organisation)
+        public bool UpdateOrganisation(Organisation organisation)
         {
             using (var db = new SqlConnection(_connectionString))
             {
@@ -71,11 +71,13 @@ namespace ReactVR_API.Core.Repositories
                 var sql = SqlCrudHelper.GetUpdateStatement(parameters, organisation.GetType().Name);
                 sql += " WHERE OrganisationId = @OrganisationId";
 
-                db.Execute(sql, organisation);
+                var result = db.Execute(sql, parameters);
+                var boolResult = result == 1 ? true : false;
+                return boolResult;
             }
         }
 
-        public void DeleteOrganisation(Guid organisationId)
+        public bool DeleteOrganisation(Guid organisationId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
@@ -85,7 +87,9 @@ namespace ReactVR_API.Core.Repositories
                 };
                 var sql = "update organisation set [IsDeleted] = 1 WHERE [OrganisationId] = @OrganisationId";
 
-                db.Execute(sql, parameters);
+                var result = db.Execute(sql, parameters);
+                var boolResult = result == 1 ? true : false;
+                return boolResult;
             }
         }
     }

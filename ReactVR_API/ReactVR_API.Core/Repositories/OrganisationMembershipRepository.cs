@@ -43,6 +43,19 @@ namespace ReactVR_API.Core.Repositories
             }
         }
 
+        public OrganisationMembership GetOrganisationMembership(Guid userAccountId, Guid organisationId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new { userAccountId, organisationId };
+                var sql = "select * from organisationmembership where useraccountid = @useraccountid and organisationid = @organisationid";
+
+                var organisationMembership = db.QuerySingleOrDefault<OrganisationMembership>(sql, parameters);
+
+                return organisationMembership;
+            }
+        }
+
         /// <summary>
         /// Only for changing a user's role in the organisation
         /// </summary>
