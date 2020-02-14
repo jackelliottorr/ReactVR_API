@@ -35,11 +35,11 @@ namespace ReactVR_API.Core.Repositories
             using (var db = new SqlConnection(_connectionString))
             {
                 var parameters = new { InviteeId = userAccountId };
-                var sql = "select * from organisationinvite where inviteeid = @inviteeid and isused = 0";
+                var sql = "select * from organisationinvite where inviteeid = @inviteeid and isused = 0 and getdate() < expirydate";
 
-                var results = db.QuerySingleOrDefault(sql, parameters);
+                var invites = (List<OrganisationInvite>)db.Query<OrganisationInvite>(sql, parameters);
 
-                return results;
+                return invites;
             }
         }
 

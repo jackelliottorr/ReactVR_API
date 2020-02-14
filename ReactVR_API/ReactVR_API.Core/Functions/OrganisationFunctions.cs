@@ -59,7 +59,7 @@ namespace ReactVR_API.Core.Functions
             {
                 try
                 {
-                    Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                    Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
                     log.LogInformation($"JWT validated for UserAccount: {userAccountId}.");
 
                     string requestBody = await new StreamReader(req.Body).ReadToEndAsync();

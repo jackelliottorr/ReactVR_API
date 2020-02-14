@@ -15,7 +15,7 @@ namespace ReactVR_UnitTesting.FunctionsUnitTests
         private readonly ILogger logger = TestFactory.CreateLogger();
 
         // valid jwt for my email address = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjI4ZDFjNGFkLTFmOTQtNDRiYS04NGYyLTE1NzFmM2EwMGE1ZCIsImV4cCI6MTU4Mzk3MDEwMCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo3MDcxIiwiYXVkIjoiTXlBdWRpZW5jZSJ9.92TsVkYfv9YcMDFscN37zgFitDb7-VCWw2U0IdhnoCY"
-        // jwt for "Invitee Guy" = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQ2MTQ2ZWNmLWIzYTQtNDYwOC1hZDkwLTg2YjFjZGZjZjg4MCIsImV4cCI6MTU4NDEzNzc1MSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo3MDcxIiwiYXVkIjoiTXlBdWRpZW5jZSJ9.9MxouRPj0AxhMq-z60VzZ9LT2vKZMOy9VLuvleeDsLg"
+        // jwt for "Invitee Guy" = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyQWNjb3VudCI6ImNhNDRkNzhkLWZlZTktNDMwNS1hNWFkLWU4ZTc3ODZkOTA5ZSIsImV4cCI6MTU4NDE5MzA5OCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo3MDcxIiwiYXVkIjoiTXlBdWRpZW5jZSJ9.sU3R5zFbXB9Mala9z5Kio4sFaXYLTS8ohdOn_b0KMQM"
         [Fact]
         public async void CreateUserAccountTest()
         {

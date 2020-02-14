@@ -35,7 +35,7 @@ namespace ReactVR_API.Core.Security.AccessTokens
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userAccountId.ToString())
+                new Claim("UserAccount", userAccountId.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_issuerToken));

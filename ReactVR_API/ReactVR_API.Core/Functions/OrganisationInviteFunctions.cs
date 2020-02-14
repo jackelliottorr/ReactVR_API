@@ -77,7 +77,7 @@ namespace ReactVR_API.Core.Functions
 
                 var organisationInvite = new OrganisationInvite()
                 {
-                    OrganisationId = organisationInviteCreateModel.OrganisationId,
+                    OrganisationId = organisationId,
                     InvitedById = userAccountId,
                     InviteeId = invitee.UserAccountId,
                     InviteUserType = organisationInviteCreateModel.InviteUserType
@@ -161,7 +161,7 @@ namespace ReactVR_API.Core.Functions
 
         [FunctionName("AcceptOrganisationInvite")]
         public async Task<IActionResult> AcceptOrganisationInvite(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "OrganisationInvite/{OrganisationInviteId}")] HttpRequest req, ILogger log, Guid organisationInviteId)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "OrganisationInvite/{OrganisationInviteId}")] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function(AcceptOrganisationInvite) processed a request.");
 
@@ -173,10 +173,13 @@ namespace ReactVR_API.Core.Functions
                     return new UnauthorizedResult();
                 }
 
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var organisationInvite = JsonConvert.DeserializeObject<OrganisationInvite>(requestBody);
+
                 Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
 
                 var organisationInviteRepo = new OrganisationInviteRepository();
-                var organisationInvite = organisationInviteRepo.GetOrganisationInviteById(organisationInviteId);
+                organisationInvite = organisationInviteRepo.GetOrganisationInviteById(organisationInvite.OrganisationInviteId);
 
                 if (userAccountId != organisationInvite.InviteeId)
                 {
@@ -186,7 +189,7 @@ namespace ReactVR_API.Core.Functions
                 var organisationMembership = new OrganisationMembership()
                 {
                     OrganisationId = organisationInvite.OrganisationId,
-                    UserAccountId = organisationInvite.InvitedById,
+                    UserAccountId = organisationInvite.InviteeId,
                     OrganisationInviteId = organisationInvite.OrganisationInviteId, 
                     UserType = organisationInvite.InviteUserType
                 };
@@ -198,7 +201,7 @@ namespace ReactVR_API.Core.Functions
                 }
 
                 organisationMembershipRepo.CreateOrganisationMembership(organisationMembership);
-                organisationInviteRepo.UseOrganisationInvite(organisationInviteId);
+                organisationInviteRepo.UseOrganisationInvite(organisationInvite.OrganisationInviteId);
 
                 // return JWT with the newly joined Organisation's Id
                 var jwt = _tokenCreator.CreateToken(userAccountId, organisationInvite.OrganisationId);

@@ -9,7 +9,7 @@ namespace ReactVR_API.Common.Models
         public Guid OrganisationInviteId { get; set; }
         public Guid OrganisationId { get; set; }
         public Guid InvitedById { get; set; }
-        public Guid? InviteeId { get; set; }
+        public Guid InviteeId { get; set; }
         public UserType InviteUserType { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ExpiryDate { get; set; }
