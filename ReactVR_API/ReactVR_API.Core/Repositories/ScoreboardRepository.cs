@@ -72,5 +72,25 @@ namespace ReactVR_API.Core.Repositories
                 db.Execute(sql, parameters);
             }
         }
+
+        public List<ScoreboardViewModel> GetScoreboardForLevelConfiguration(Guid levelConfigurationId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new
+                {
+                    LevelConfigurationId = levelConfigurationId
+                };
+                var sql = "select top (100) u.Name, s.Score, s.CreatedDate " +
+                          "from scoreboard s " +
+                          "inner join useraccount u " +
+                          "on s.UserAccountId = u.UserAccountId " +
+                          "where s.LevelConfigurationId = @LevelConfigurationId";
+
+                var scores = (List<ScoreboardViewModel>)db.Query<ScoreboardViewModel>(sql, parameters);
+
+                return scores;
+            }
+        }
     }
 }

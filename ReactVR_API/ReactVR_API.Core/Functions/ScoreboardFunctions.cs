@@ -9,26 +9,72 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ReactVR_API.Common.Models;
 using ReactVR_API.Core.Repositories;
+using ReactVR_API.Core.Security.AccessTokens;
+using ReactVR_API.Core.HelperClasses;
+using System.Linq;
 
 namespace ReactVR_API.Core.Functions
 {
-    public static class ScoreboardFunctions
+    public class ScoreboardFunctions
     {
-        [FunctionName("CreateScoreboard")]
-        public static async Task<IActionResult> CreateScoreboard(
-  [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "scoreboard")] HttpRequest req, ILogger log)
-        {
-            log.LogInformation("C# HTTP trigger function(CreateScoreboard) processed a request.");
+        #region Private Fields
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var scoreboard = JsonConvert.DeserializeObject<Scoreboard>(requestBody);
+        private readonly IAccessTokenProvider _tokenProvider;
+        private readonly AccessTokenCreator _tokenCreator;
+
+        #endregion
+
+        #region Constructor
+
+        public ScoreboardFunctions()
+        {
+            //var issuerToken = Environment.GetEnvironmentVariable("IssuerToken");
+            //var audience = Environment.GetEnvironmentVariable("Audience");
+            //var issuer = Environment.GetEnvironmentVariable("Issuer");
+
+            var issuerToken = TemporaryEnvironmentVariables.GetIssuerToken();
+            var audience = TemporaryEnvironmentVariables.GetAudience();
+            var issuer = TemporaryEnvironmentVariables.GetIssuer();
+
+            _tokenCreator = new AccessTokenCreator(issuerToken, audience, issuer);
+            _tokenProvider = new AccessTokenProvider(issuerToken, audience, issuer);
+        }
+
+        #endregion
+
+        #region Functions
+
+        [FunctionName("CreateScoreboardEntry")]
+        public async Task<IActionResult> CreateScoreboardEntry(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Scoreboard/CreateScoreboardEntry")] HttpRequest req, ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function(CreateScoreboardEntry) processed a request.");
 
             try
             {
+                var accessTokenResult = _tokenProvider.ValidateToken(req);
+                if (accessTokenResult.Status != AccessTokenStatus.Valid)
+                {
+                    return new UnauthorizedResult();
+                }
+
+                Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
+                Guid organisationId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "Organisation").Value);
+
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var scoreboardCreateModel = JsonConvert.DeserializeObject<ScoreboardCreateModel>(requestBody);
+
+                var scoreboard = new Scoreboard()
+                {
+                    UserAccountId = userAccountId,
+                    LevelConfigurationId = scoreboardCreateModel.LevelConfigurationId,
+                    Score = scoreboardCreateModel.Score
+                };
+
                 var scoreboardRepo = new ScoreboardRepository();
                 var newId = scoreboardRepo.CreateScoreboard(scoreboard);
 
-                return new OkObjectResult($"Scoreboard created with id {newId}.");
+                return new OkObjectResult($"Score logged.");
             }
             catch (Exception exception)
             {
@@ -36,64 +82,37 @@ namespace ReactVR_API.Core.Functions
             }
         }
 
-        [FunctionName("GetScoreboardByScoreboardId")]
-        public static async Task<IActionResult> GetScoreboardByScoreboardId(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "scoreboard/{ScoreboardId}")] HttpRequest req, ILogger log, Guid scoreboardId)
-        {
-            log.LogInformation("C# HTTP trigger function(GetScoreboardByScoreboardId) processed a request.");
-
-            try
-            {
-                var scoreboardRepo = new ScoreboardRepository();
-                var scoreboard = scoreboardRepo.GetScoreboardById(scoreboardId);
-
-                return new OkObjectResult(scoreboard);
-            }
-            catch (Exception exception)
-            {
-                return new BadRequestObjectResult(exception.Message);
-            }
-        }
-
-        //[FunctionName("UpdateScoreboard")]
-        //public static async Task<IActionResult> UpdateScoreboard(
-        //[HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "scoreboard")] HttpRequest req, ILogger log)
-        //{
-        //    log.LogInformation("C# HTTP trigger function(UpdateScoreboard) processed a request.");
-
-        //    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        //    var scoreboard = JsonConvert.DeserializeObject<Scoreboard>(requestBody);
-
-        //    try
-        //    {
-        //        var scoreboardRepo = new ScoreboardRepository();
-        //        scoreboardRepo.UpdateScoreboard(scoreboard);
-
-        //        return new OkObjectResult($"Updated {scoreboard.Name}.");
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        return new BadRequestObjectResult(exception.Message);
-        //    }
-        //}
-
-        [FunctionName("DeleteScoreboard")]
-        public static async Task<IActionResult> DeleteScoreboard(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "scoreboard/{ScoreboardId}")] HttpRequest req, ILogger log, Guid scoreboardId)
+        [FunctionName("GetScoreboardForLevelConfiguration")]
+        public async Task<IActionResult> GetScoreboardForLevelConfiguration(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Scoreboard/GetScoreboardForLevelConfiguration")] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function(DeleteScoreboard) processed a request.");
 
             try
             {
-                var scoreboardRepo = new ScoreboardRepository();
-                scoreboardRepo.DeleteScoreboard(scoreboardId);
+                var accessTokenResult = _tokenProvider.ValidateToken(req);
+                if (accessTokenResult.Status != AccessTokenStatus.Valid)
+                {
+                    return new UnauthorizedResult();
+                }
 
-                return new OkObjectResult($"Deleted {scoreboardId}");
+                Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
+                Guid organisationId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "Organisation").Value);
+                
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var scoreboard = JsonConvert.DeserializeObject<Scoreboard>(requestBody);
+
+                var scoreboardRepo = new ScoreboardRepository();
+                var scores = scoreboardRepo.GetScoreboardForLevelConfiguration(scoreboard.LevelConfigurationId);
+
+                return new OkObjectResult(scores);
             }
             catch (Exception exception)
             {
                 return new BadRequestObjectResult(exception.Message);
             }
         }
+
+        #endregion
     }
 }

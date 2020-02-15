@@ -12,4 +12,17 @@ namespace ReactVR_API.Common.Models
         public DateTime CreatedDate { get; set; }
         public bool IsDeleted { get; set; }
     }
+
+    public class ScoreboardCreateModel
+    {
+        public Guid LevelConfigurationId { get; set; }
+        public int Score { get; set; }
+    }
+
+    public class ScoreboardViewModel
+    {
+        public string Name { get; set; }
+        public int Score { get; set; }
+        public DateTime CreatedDate { get; set; }
+    }
 }
