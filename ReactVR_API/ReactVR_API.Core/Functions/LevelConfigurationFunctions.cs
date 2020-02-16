@@ -9,26 +9,71 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ReactVR_API.Core.Repositories;
 using ReactVR_API.Common.Models;
+using ReactVR_API.Core.Security.AccessTokens;
+using ReactVR_API.Core.HelperClasses;
+using System.Linq;
 
 namespace ReactVR_API.Core.Functions
 {
-    public static class LevelConfigurationFunctions
+    public class LevelConfigurationFunctions
     {
-        [FunctionName("CreateLevelConfiguration")]
-        public static async Task<IActionResult> CreateLevelConfiguration(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "levelConfiguration")] HttpRequest req, ILogger log)
-        {
-            log.LogInformation("C# HTTP trigger function(CreateLevelConfiguration) processed a request.");
+        #region Private Fields
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var levelConfiguration = JsonConvert.DeserializeObject<LevelConfiguration>(requestBody);
+        private readonly IAccessTokenProvider _tokenProvider;
+        private readonly AccessTokenCreator _tokenCreator;
+
+        #endregion
+
+        #region Constructor
+
+        public LevelConfigurationFunctions()
+        {
+            //var issuerToken = Environment.GetEnvironmentVariable("IssuerToken");
+            //var audience = Environment.GetEnvironmentVariable("Audience");
+            //var issuer = Environment.GetEnvironmentVariable("Issuer");
+
+            var issuerToken = TemporaryEnvironmentVariables.GetIssuerToken();
+            var audience = TemporaryEnvironmentVariables.GetAudience();
+            var issuer = TemporaryEnvironmentVariables.GetIssuer();
+
+            _tokenCreator = new AccessTokenCreator(issuerToken, audience, issuer);
+            _tokenProvider = new AccessTokenProvider(issuerToken, audience, issuer);
+        }
+
+        #endregion
+
+        #region Functions
+
+        [FunctionName("GetLevelConfigurationsByLevelId")]
+        public async Task<IActionResult> GetLevelConfigurationsByLevelId(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "LevelConfiguration/{LevelId}")] HttpRequest req, ILogger log, Guid levelId)
+        {
+            log.LogInformation("C# HTTP trigger function(GetLevelConfigurationsByLevelId) processed a request.");
 
             try
             {
-                var levelConfigurationRepo = new LevelConfigurationRepository();
-                var newId = levelConfigurationRepo.CreateLevelConfiguration(levelConfiguration);
+                var accessTokenResult = _tokenProvider.ValidateToken(req);
+                if (accessTokenResult.Status != AccessTokenStatus.Valid)
+                {
+                    return new UnauthorizedResult();
+                }
 
-                return new OkObjectResult($"LevelConfiguration created with id {newId}.");
+                Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
+                Guid organisationId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "Organisation").Value);
+
+                // possibly can speed this up/less calls by using advanced Dapper features
+                var levelConfigurationRepo = new LevelConfigurationRepository();
+                var targetZoneRepo = new TargetZoneRepository();
+                var targetRepo = new TargetRepository();
+
+                var levelConfigurations = levelConfigurationRepo.GetLevelConfigurationsByLevelId(levelId);
+                foreach (var levelConfigurationViewModel in levelConfigurations)
+                {
+                    levelConfigurationViewModel.TargetZone = targetZoneRepo.GetTargetZoneByLevelConfigurationId(levelConfigurationViewModel.LevelConfigurationId);
+                    levelConfigurationViewModel.Targets = targetRepo.GetTargetsByLevelConfigurationId(levelConfigurationViewModel.LevelConfigurationId);
+                }
+
+                return new OkObjectResult(levelConfigurations);
             }
             catch (Exception exception)
             {
@@ -36,64 +81,69 @@ namespace ReactVR_API.Core.Functions
             }
         }
 
-        [FunctionName("GetLevelConfigurationById")]
-        public static async Task<IActionResult> GetLevelConfigurationById(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "levelConfiguration/{LevelConfigurationId}")] HttpRequest req, ILogger log, Guid levelConfigurationId)
-        {
-            log.LogInformation("C# HTTP trigger function(GetLevelConfigurationById) processed a request.");
+        //[FunctionName("CreateLevelConfiguration")]
+        //public static async Task<IActionResult> CreateLevelConfiguration(
+        //[HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "levelConfiguration")] HttpRequest req, ILogger log)
+        //{
+        //    log.LogInformation("C# HTTP trigger function(CreateLevelConfiguration) processed a request.");
 
-            try
-            {
-                var levelConfigurationRepo = new LevelConfigurationRepository();
-                var levelConfiguration = levelConfigurationRepo.GetLevelConfigurationById(levelConfigurationId);
+        //    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        //    var levelConfiguration = JsonConvert.DeserializeObject<LevelConfiguration>(requestBody);
 
-                return new OkObjectResult(levelConfiguration);
-            }
-            catch (Exception exception)
-            {
-                return new BadRequestObjectResult(exception.Message);
-            }
-        }
+        //    try
+        //    {
+        //        var levelConfigurationRepo = new LevelConfigurationRepository();
+        //        var newId = levelConfigurationRepo.CreateLevelConfiguration(levelConfiguration);
 
-        [FunctionName("UpdateLevelConfiguration")]
-        public static async Task<IActionResult> UpdateLevelConfiguration(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "levelConfiguration")] HttpRequest req, ILogger log)
-        {
-            log.LogInformation("C# HTTP trigger function(UpdateLevelConfiguration) processed a request.");
+        //        return new OkObjectResult($"LevelConfiguration created with id {newId}.");
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        return new BadRequestObjectResult(exception.Message);
+        //    }
+        //}
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var levelConfiguration = JsonConvert.DeserializeObject<LevelConfiguration>(requestBody);
+        //[FunctionName("UpdateLevelConfiguration")]
+        //public static async Task<IActionResult> UpdateLevelConfiguration(
+        //[HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "levelConfiguration")] HttpRequest req, ILogger log)
+        //{
+        //    log.LogInformation("C# HTTP trigger function(UpdateLevelConfiguration) processed a request.");
 
-            try
-            {
-                var levelConfigurationRepo = new LevelConfigurationRepository();
-                levelConfigurationRepo.UpdateLevelConfiguration(levelConfiguration);
+        //    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        //    var levelConfiguration = JsonConvert.DeserializeObject<LevelConfiguration>(requestBody);
 
-                return new OkObjectResult($"Updated {levelConfiguration.Name}.");
-            }
-            catch (Exception exception)
-            {
-                return new BadRequestObjectResult(exception.Message);
-            }
-        }
+        //    try
+        //    {
+        //        var levelConfigurationRepo = new LevelConfigurationRepository();
+        //        levelConfigurationRepo.UpdateLevelConfiguration(levelConfiguration);
 
-        [FunctionName("DeleteLevelConfiguration")]
-        public static async Task<IActionResult> DeleteLevelConfiguration(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "levelConfiguration/{LevelConfigurationId}")] HttpRequest req, ILogger log, Guid levelConfigurationId)
-        {
-            log.LogInformation("C# HTTP trigger function(DeleteLevelConfiguration) processed a request.");
+        //        return new OkObjectResult($"Updated {levelConfiguration.Name}.");
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        return new BadRequestObjectResult(exception.Message);
+        //    }
+        //}
 
-            try
-            {
-                var levelConfigurationRepo = new LevelConfigurationRepository();
-                levelConfigurationRepo.DeleteLevelConfiguration(levelConfigurationId);
+        //[FunctionName("DeleteLevelConfiguration")]
+        //public static async Task<IActionResult> DeleteLevelConfiguration(
+        //[HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "levelConfiguration/{LevelConfigurationId}")] HttpRequest req, ILogger log, Guid levelConfigurationId)
+        //{
+        //    log.LogInformation("C# HTTP trigger function(DeleteLevelConfiguration) processed a request.");
 
-                return new OkObjectResult($"Deleted {levelConfigurationId}");
-            }
-            catch (Exception exception)
-            {
-                return new BadRequestObjectResult(exception.Message);
-            }
-        }
+        //    try
+        //    {
+        //        var levelConfigurationRepo = new LevelConfigurationRepository();
+        //        levelConfigurationRepo.DeleteLevelConfiguration(levelConfigurationId);
+
+        //        return new OkObjectResult($"Deleted {levelConfigurationId}");
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        return new BadRequestObjectResult(exception.Message);
+        //    }
+        //}
+
+        #endregion
     }
 }

@@ -30,6 +30,19 @@ namespace ReactVR_API.Core.Repositories
             }
         }
 
+        public TargetZone GetTargetZoneByLevelConfigurationId(Guid levelConfigurationId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new{levelConfigurationId = levelConfigurationId};
+                var sql = "select * from [TargetZone] where [LevelConfigurationId] = @LevelConfigurationId";
+
+                var targetZone = db.QuerySingle<TargetZone>(sql, parameters);
+
+                return targetZone;
+            }
+        }
+
         public TargetZone GetTargetZoneById(Guid targetZoneId)
         {
             using (var db = new SqlConnection(_connectionString))

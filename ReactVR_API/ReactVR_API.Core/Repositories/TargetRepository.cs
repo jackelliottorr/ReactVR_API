@@ -34,6 +34,19 @@ namespace ReactVR_API.Core.Repositories
             }
         }
 
+        public List<Target> GetTargetsByLevelConfigurationId(Guid levelConfigurationId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new { levelConfigurationId = levelConfigurationId };
+                var sql = "select * from [Target] where [LevelConfigurationId] = @LevelConfigurationId";
+
+                var targets = (List<Target>)db.Query<Target>(sql, parameters);
+
+                return targets;
+            }
+        }
+
         public Target GetTargetById(Guid targetId)
         {
             using (var db = new SqlConnection(_connectionString))

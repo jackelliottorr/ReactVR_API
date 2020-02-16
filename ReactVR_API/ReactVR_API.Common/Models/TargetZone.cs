@@ -6,6 +6,7 @@ namespace ReactVR_API.Common.Models
     public class TargetZone
     {
         public Guid TargetZoneId { get; set; }
+        public Guid LevelConfigurationId { get; set; }
         public string TargetZoneShape { get; set; }
         public decimal TargetZoneX { get; set; }
         public decimal TargetZoneY { get; set; }

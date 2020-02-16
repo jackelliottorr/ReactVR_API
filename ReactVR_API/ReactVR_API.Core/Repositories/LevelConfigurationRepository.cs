@@ -19,7 +19,6 @@ namespace ReactVR_API.Core.Repositories
                     levelConfiguration.LevelId,
                     levelConfiguration.OrganisationId,
                     levelConfiguration.CreatedById,
-                    levelConfiguration.TargetZoneId,
                     levelConfiguration.Name,
                     levelConfiguration.Description,
                     levelConfiguration.TargetSpawnDelay,
@@ -35,20 +34,46 @@ namespace ReactVR_API.Core.Repositories
             }
         }
 
+        public List<LevelConfigurationViewModel> GetLevelConfigurationsByLevelId(Guid levelId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new { LevelId = levelId };
+                var sql = "select top (10) * from levelconfiguration where levelid = @LevelId";
+
+                var levelConfigurations = (List<LevelConfigurationViewModel>)db.Query<LevelConfigurationViewModel>(sql, parameters);
+
+                return levelConfigurations;
+            }
+        }
+
+        public List<LevelConfiguration> TestDapper(Guid levelId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new { LevelId = levelId };
+                var sql = "select top (10) from levelconfiguration where levelid = @LevelId";
+
+                var levelConfigurations = (List<LevelConfiguration>)db.Query<LevelConfiguration>(sql, parameters);
+
+                return levelConfigurations;
+            }
+        }
+
         /// <summary>
         /// Include other ways to get Level Configurations
         /// For example, by organisation, by public, by level, by name??
         /// </summary>
         /// <param name="levelConfigurationId"></param>
         /// <returns></returns>
-        public LevelConfiguration GetLevelConfigurationById(Guid levelConfigurationId)
+        public LevelConfigurationViewModel GetLevelConfigurationById(Guid levelConfigurationId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
                 var parameters = new { levelConfigurationId };
                 var sql = "select * from levelConfiguration where levelConfigurationid = @levelConfigurationId";
 
-                var levelConfiguration = db.QuerySingle<LevelConfiguration>(sql, parameters);
+                var levelConfiguration = db.QuerySingle<LevelConfigurationViewModel>(sql, parameters);
 
                 return levelConfiguration;
             }

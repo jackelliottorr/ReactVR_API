@@ -71,5 +71,15 @@ namespace ReactVR_API.Core.Repositories
                 db.Execute(sql, parameters);
             }
         }
+
+        public List<Level> GetAllLevels()
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var sql = "select top (10) * from [Level]";
+                var levels = (List<Level>)db.Query<Level>(sql);
+                return levels;
+            }
+        }
     }
 }
