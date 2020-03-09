@@ -59,7 +59,6 @@ namespace ReactVR_API.Core.Functions
                 }
 
                 Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
-                Guid organisationId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "Organisation").Value);
 
                 // possibly can speed this up/less calls by using advanced Dapper features
                 var levelConfigurationRepo = new LevelConfigurationRepository();

@@ -17,14 +17,8 @@ namespace ReactVR_API.Core.Functions
 {
     public class ScoreboardFunctions
     {
-        #region Private Fields
-
         private readonly IAccessTokenProvider _tokenProvider;
         private readonly AccessTokenCreator _tokenCreator;
-
-        #endregion
-
-        #region Constructor
 
         public ScoreboardFunctions()
         {
@@ -39,9 +33,7 @@ namespace ReactVR_API.Core.Functions
             _tokenCreator = new AccessTokenCreator(issuerToken, audience, issuer);
             _tokenProvider = new AccessTokenProvider(issuerToken, audience, issuer);
         }
-
-        #endregion
-
+        
         #region Functions
 
         [FunctionName("CreateScoreboardEntry")]
@@ -59,7 +51,6 @@ namespace ReactVR_API.Core.Functions
                 }
 
                 Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
-                Guid organisationId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "Organisation").Value);
 
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var scoreboardCreateModel = JsonConvert.DeserializeObject<ScoreboardCreateModel>(requestBody);

@@ -112,9 +112,6 @@ namespace ReactVR_API.Core.Functions
 
                 if (loginResult.Status == LoginStatus.Success)
                 {
-                    var userAccountRepo = new UserAccountRepository();
-                    userAccountRepo.DeleteUserAccount(loginResult.UserAccount.UserAccountId);
-
                     // return JWT with UserAccountId
                     var jwt = _tokenCreator.CreateToken(loginResult.UserAccount.UserAccountId);
                     return new OkObjectResult(jwt);
@@ -130,6 +127,38 @@ namespace ReactVR_API.Core.Functions
                 return new BadRequestObjectResult(exception.Message);
             }
         }
+
+        [FunctionName("ValidateAccessToken")]
+        public async Task<IActionResult> ValidateAccessToken(
+[HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UserAccount/ValidateAccessToken")] HttpRequest req, ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function(ValidateAccessToken) processed a request.");
+
+            var accessTokenResult = _tokenProvider.ValidateToken(req);
+
+            if (accessTokenResult.Status == AccessTokenStatus.Valid)
+            {
+                try
+                {
+                    var userAccountId = accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value;
+                    log.LogInformation($"JWT validated for UserAccount: {userAccountId}.");
+
+                    // return updated JWT with UserAccountId
+                    var jwt = _tokenCreator.CreateToken(new Guid(userAccountId));
+                    return new OkObjectResult(jwt);
+                }
+                catch (Exception exception)
+                {
+                    return new BadRequestObjectResult(exception.Message);
+                }
+            }
+            else
+            {
+                return new UnauthorizedResult();
+            }
+        }
+
+
 
         [FunctionName("UpdateUserAccount")]
         public async Task<IActionResult> UpdateUserAccount(
