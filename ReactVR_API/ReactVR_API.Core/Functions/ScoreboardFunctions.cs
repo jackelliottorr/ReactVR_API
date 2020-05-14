@@ -75,7 +75,7 @@ namespace ReactVR_API.Core.Functions
 
         [FunctionName("GetScoreboardForLevelConfiguration")]
         public async Task<IActionResult> GetScoreboardForLevelConfiguration(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Scoreboard/GetScoreboardForLevelConfiguration")] HttpRequest req, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Scoreboard/{LevelConfigurationId}")] HttpRequest req, ILogger log, Guid levelConfigurationId)
         {
             log.LogInformation("C# HTTP trigger function(DeleteScoreboard) processed a request.");
 
@@ -88,13 +88,9 @@ namespace ReactVR_API.Core.Functions
                 }
 
                 Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
-                Guid organisationId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "Organisation").Value);
-                
-                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                var scoreboard = JsonConvert.DeserializeObject<Scoreboard>(requestBody);
 
                 var scoreboardRepo = new ScoreboardRepository();
-                var scores = scoreboardRepo.GetScoreboardForLevelConfiguration(scoreboard.LevelConfigurationId);
+                var scores = scoreboardRepo.GetScoreboardForLevelConfiguration(levelConfigurationId);
 
                 return new OkObjectResult(scores);
             }
