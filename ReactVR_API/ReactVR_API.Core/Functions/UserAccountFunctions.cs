@@ -23,33 +23,41 @@ namespace ReactVR_API.Core.Functions
 {
     public class UserAccountFunctions
     {
-        #region Private Fields
 
         private readonly IAccessTokenProvider _tokenProvider;
         private readonly AccessTokenCreator _tokenCreator;
 
-        #endregion
-
-        #region Constructor
-
         // for DI, pass tokenProvider to constructor instead of instantiating here
+        //var issuerToken = TemporaryEnvironmentVariables.GetIssuerToken();
+        //var audience = TemporaryEnvironmentVariables.GetAudience();
+        //var issuer = TemporaryEnvironmentVariables.GetIssuer();
         public UserAccountFunctions()
         {
-            //var issuerToken = Environment.GetEnvironmentVariable("IssuerToken");
-            //var audience = Environment.GetEnvironmentVariable("Audience");
-            //var issuer = Environment.GetEnvironmentVariable("Issuer");
-
-            var issuerToken = TemporaryEnvironmentVariables.GetIssuerToken();
-            var audience = TemporaryEnvironmentVariables.GetAudience();
-            var issuer = TemporaryEnvironmentVariables.GetIssuer();
+            var issuerToken = Environment.GetEnvironmentVariable("IssuerToken");
+            var audience = Environment.GetEnvironmentVariable("Audience");
+            var issuer = Environment.GetEnvironmentVariable("Issuer");
 
             _tokenCreator = new AccessTokenCreator(issuerToken, audience, issuer);
             _tokenProvider = new AccessTokenProvider(issuerToken, audience, issuer);
         }
 
-        #endregion
-
         #region Functions
+
+        [FunctionName("TestConnection")]
+        public async Task<IActionResult> TestConnection(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UserAccount/TestConnection")] HttpRequest req, ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function(TestConnection) processed a request.");
+
+            try
+            {
+                return new OkObjectResult($"Successful connection at {DateTime.Now}");
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
 
         [FunctionName("CreateUserAccount")]
         public async Task<IActionResult> CreateUserAccount(
@@ -130,7 +138,7 @@ namespace ReactVR_API.Core.Functions
 
         [FunctionName("ValidateAccessToken")]
         public async Task<IActionResult> ValidateAccessToken(
-[HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UserAccount/ValidateAccessToken")] HttpRequest req, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "UserAccount/ValidateAccessToken")] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function(ValidateAccessToken) processed a request.");
 
@@ -157,8 +165,6 @@ namespace ReactVR_API.Core.Functions
                 return new UnauthorizedResult();
             }
         }
-
-
 
         [FunctionName("UpdateUserAccount")]
         public async Task<IActionResult> UpdateUserAccount(

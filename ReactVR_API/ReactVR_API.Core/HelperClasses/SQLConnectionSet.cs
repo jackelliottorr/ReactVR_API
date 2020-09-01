@@ -8,8 +8,9 @@ namespace ReactVR_API.Core.HelperClasses
     {
         public static string GetConnectionString()
         {
-            var connectionString = TemporaryEnvironmentVariables.GetDatabaseConnectionString();
-            //var connectionString = Environment.GetEnvironmentVariable("ReactVR_DatabaseConnectionString", EnvironmentVariableTarget.Process);
+            // used in testing
+            //var connectionString = TemporaryEnvironmentVariables.GetDatabaseConnectionString();
+            var connectionString = Environment.GetEnvironmentVariable("ReactVR_DatabaseConnectionString", EnvironmentVariableTarget.Process);
 
             return connectionString;
         }

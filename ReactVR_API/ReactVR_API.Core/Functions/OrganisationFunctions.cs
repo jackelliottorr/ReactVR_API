@@ -31,13 +31,9 @@ namespace ReactVR_API.Core.Functions
 
         public OrganisationFunctions()
         {
-            //var issuerToken = Environment.GetEnvironmentVariable("IssuerToken");
-            //var audience = Environment.GetEnvironmentVariable("Audience");
-            //var issuer = Environment.GetEnvironmentVariable("Issuer");
-
-            var issuerToken = TemporaryEnvironmentVariables.GetIssuerToken();
-            var audience = TemporaryEnvironmentVariables.GetAudience();
-            var issuer = TemporaryEnvironmentVariables.GetIssuer();
+            var issuerToken = Environment.GetEnvironmentVariable("IssuerToken");
+            var audience = Environment.GetEnvironmentVariable("Audience");
+            var issuer = Environment.GetEnvironmentVariable("Issuer");
 
             _tokenCreator = new AccessTokenCreator(issuerToken, audience, issuer);
             _tokenProvider = new AccessTokenProvider(issuerToken, audience, issuer);
@@ -52,13 +48,14 @@ namespace ReactVR_API.Core.Functions
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Organisation/CreateOrganisation")] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function(CreateOrganisation) processed a request.");
-
-            var accessTokenResult = _tokenProvider.ValidateToken(req);
-
-            if (accessTokenResult.Status == AccessTokenStatus.Valid)
+            
+            try
             {
-                try
+                var accessTokenResult = _tokenProvider.ValidateToken(req);
+
+                if (accessTokenResult.Status == AccessTokenStatus.Valid)
                 {
+
                     Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
                     log.LogInformation($"JWT validated for UserAccount: {userAccountId}.");
 
@@ -90,14 +87,14 @@ namespace ReactVR_API.Core.Functions
                     var jwt = _tokenCreator.CreateToken(userAccountId, organisationId);
                     return new OkObjectResult(jwt);
                 }
-                catch (Exception exception)
+                else
                 {
-                    return new BadRequestObjectResult(exception.Message);
+                    return new UnauthorizedResult();
                 }
             }
-            else
+            catch (Exception exception)
             {
-                return new UnauthorizedResult();
+                return new BadRequestObjectResult(exception.Message);
             }
         }
 
@@ -107,12 +104,13 @@ namespace ReactVR_API.Core.Functions
         {
             log.LogInformation("C# HTTP trigger function(GetOrganisationsForUser) processed a request.");
 
-            var accessTokenResult = _tokenProvider.ValidateToken(req);
-
-            if (accessTokenResult.Status == AccessTokenStatus.Valid)
+            try
             {
-                try
+                var accessTokenResult = _tokenProvider.ValidateToken(req);
+
+                if (accessTokenResult.Status == AccessTokenStatus.Valid)
                 {
+
                     Guid userAccountId = new Guid(accessTokenResult.Principal.Claims.First(c => c.Type == "UserAccount").Value);
                     log.LogInformation($"JWT validated for UserAccount: {userAccountId}.");
 
@@ -122,14 +120,15 @@ namespace ReactVR_API.Core.Functions
 
                     return new OkObjectResult(organisations);
                 }
-                catch (Exception exception)
+
+                else
                 {
-                    return new BadRequestObjectResult(exception.Message);
+                    return new UnauthorizedResult();
                 }
             }
-            else
+            catch (Exception exception)
             {
-                return new UnauthorizedResult();
+                return new BadRequestObjectResult(exception.Message);
             }
         }
 

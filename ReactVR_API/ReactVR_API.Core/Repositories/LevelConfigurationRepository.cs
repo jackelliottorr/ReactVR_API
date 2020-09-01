@@ -47,6 +47,19 @@ namespace ReactVR_API.Core.Repositories
             }
         }
 
+        public List<LevelConfigurationViewModel> GetLevelConfigurationsByCreatedById(Guid userAccountId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var parameters = new { UserAccountId = userAccountId };
+                var sql = "select top (10) * from levelconfiguration where createdById = @UserAccountId";
+
+                var levelConfigurations = (List<LevelConfigurationViewModel>)db.Query<LevelConfigurationViewModel>(sql, parameters);
+
+                return levelConfigurations;
+            }
+        }
+
         public List<LevelConfiguration> TestDapper(Guid levelId)
         {
             using (var db = new SqlConnection(_connectionString))

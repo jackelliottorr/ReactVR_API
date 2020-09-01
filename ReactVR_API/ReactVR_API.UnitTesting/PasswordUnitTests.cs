@@ -51,5 +51,37 @@ namespace ReactVR_API.UnitTesting
             // Assert  
             Assert.True(hash1 != hash2);
         }
+
+
+        [Fact]
+        public void Different_salts_generated()
+        {        
+            // Arrange  
+            // Act
+            var salt1 = PasswordManager.GenerateSalt();
+            var salt2 = PasswordManager.GenerateSalt();
+
+            // Assert  
+            Assert.True(salt1 != salt2);
+        }
+
+        [Fact]
+        public void Identical_passwords_have_different_hash()
+        {             
+            // Arrange  
+            var password = "identicalpassword";
+            var identicalPassword = "identicalpassword";
+
+            //Act 
+            var salt = PasswordManager.GenerateSalt();
+            var hash1 = PasswordManager.HashPassword(password, salt);
+
+            salt = PasswordManager.GenerateSalt();
+            var hash2 = PasswordManager.HashPassword(identicalPassword, salt);
+
+            // Assert  
+            Assert.True(hash1 != hash2);
+        }
+
     }
 }
