@@ -22,13 +22,9 @@ namespace ReactVR_API.Core.Functions
 
         public ScoreboardFunctions()
         {
-            //var issuerToken = Environment.GetEnvironmentVariable("IssuerToken");
-            //var audience = Environment.GetEnvironmentVariable("Audience");
-            //var issuer = Environment.GetEnvironmentVariable("Issuer");
-
-            var issuerToken = TemporaryEnvironmentVariables.GetIssuerToken();
-            var audience = TemporaryEnvironmentVariables.GetAudience();
-            var issuer = TemporaryEnvironmentVariables.GetIssuer();
+            var issuerToken = Environment.GetEnvironmentVariable("IssuerToken");
+            var audience = Environment.GetEnvironmentVariable("Audience");
+            var issuer = Environment.GetEnvironmentVariable("Issuer");
 
             _tokenCreator = new AccessTokenCreator(issuerToken, audience, issuer);
             _tokenProvider = new AccessTokenProvider(issuerToken, audience, issuer);

@@ -33,6 +33,10 @@ namespace ReactVR_API.Core.Functions
         //var issuer = TemporaryEnvironmentVariables.GetIssuer();
         public UserAccountFunctions()
         {
+            //var issuerToken = TemporaryEnvironmentVariables.GetIssuerToken();
+            //var audience = TemporaryEnvironmentVariables.GetAudience();
+            //var issuer = TemporaryEnvironmentVariables.GetIssuer();
+
             var issuerToken = Environment.GetEnvironmentVariable("IssuerToken");
             var audience = Environment.GetEnvironmentVariable("Audience");
             var issuer = Environment.GetEnvironmentVariable("Issuer");
