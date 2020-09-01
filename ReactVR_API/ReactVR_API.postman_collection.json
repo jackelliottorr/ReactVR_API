@@ -1,0 +1,1034 @@
+{
+	"info": {
+		"_postman_id": "b6b71533-2eeb-4bfc-8b57-c3d16f6f561d",
+		"name": "ReactVR_API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "UserAccount",
+			"item": [
+				{
+					"name": "UserAccount - Create",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "19007f46-d542-47bc-b32a-61a18c91a43e",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"Name\": \"Jack\",\n\t\"EmailAddress\": \"test@email.com\",\n\t\"Password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:7071/api/useraccount",
+							"host": [
+								"localhost"
+							],
+							"port": "7071",
+							"path": [
+								"api",
+								"useraccount"
+							]
+						},
+						"description": "Test API functionality for creating a UserAccount"
+					},
+					"response": []
+				},
+				{
+					"name": "UserAccount - Read",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:7071/api/useraccount/17874532-544f-4f41-8fd2-954cf7d122ac",
+							"host": [
+								"localhost"
+							],
+							"port": "7071",
+							"path": [
+								"api",
+								"useraccount",
+								"17874532-544f-4f41-8fd2-954cf7d122ac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UserAccount - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"UserAccountId\": \"17874532-544f-4f41-8fd2-954cf7d122ac\",\n\t\"Name\": \"Jack Updated\",\n\t\"EmailAddress\": \"testupdated@email.com\",\n\t\"Password\": \"passwordupdated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:7071/api/useraccount",
+							"host": [
+								"localhost"
+							],
+							"port": "7071",
+							"path": [
+								"api",
+								"useraccount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UserAccount - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:7071/api/useraccount/7ca71c65-ddf5-48f2-9b2b-0372100d560c",
+							"host": [
+								"localhost"
+							],
+							"port": "7071",
+							"path": [
+								"api",
+								"useraccount",
+								"7ca71c65-ddf5-48f2-9b2b-0372100d560c"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Organisation",
+			"item": [
+				{
+					"name": "Organisation - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"OrganisationName\": \"MyTestOrganisation\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/organisation",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"organisation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Organisation - Read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/organisation/3ab29d49-c707-40e5-b57d-6ccdd8142a4d",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"organisation",
+								"3ab29d49-c707-40e5-b57d-6ccdd8142a4d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Organisation - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"OrganisationId\": \"3ab29d49-c707-40e5-b57d-6ccdd8142a4d\",\n\t\"OrganisationName\": \"My Test Organisation 002\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/organisation/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"organisation",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Organisation - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/organisation/3ab29d49-c707-40e5-b57d-6ccdd8142a4d",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"organisation",
+								"3ab29d49-c707-40e5-b57d-6ccdd8142a4d"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "OrganisationMembership",
+			"item": [
+				{
+					"name": "OrganisationMembership - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"OrganisationId\": \"3ab29d49-c707-40e5-b57d-6ccdd8142a4d\",\n\t\"UserAccountId\": \"95bd4941-52eb-48ea-8a31-d326c5824d4c\",\n\t\"UserTypeId\": \"1\",\n\t\"OrganisationInviteId\": \"c4e90d0e-962f-41bb-8276-23d8a393acc7\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/OrganisationMembership",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"OrganisationMembership"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrganisationMembership - Read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/OrganisationMembership/08784e81-b32b-4f77-a087-3c07e5431867",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"OrganisationMembership",
+								"08784e81-b32b-4f77-a087-3c07e5431867"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrganisationMembership  - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"OrganisationInviteId\": \"08784e81-b32b-4f77-a087-3c07e5431867\",\n\t\"UserTypeId\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/OrganisationMembership/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"OrganisationMembership",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrganisationMembership - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/OrganisationMembership/08784e81-b32b-4f77-a087-3c07e5431867",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"OrganisationMembership",
+								"08784e81-b32b-4f77-a087-3c07e5431867"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "OrganisationInvite",
+			"item": [
+				{
+					"name": "OrganisationInvite - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"OrganisationId\": \"3ab29d49-c707-40e5-b57d-6ccdd8142a4d\",\n\t\"InvitedById\": \"95bd4941-52eb-48ea-8a31-d326c5824d4c\",\n\t\"InviteUserType\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/OrganisationInvite",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"OrganisationInvite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrganisationInvite - Read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/OrganisationInvite/c4e90d0e-962f-41bb-8276-23d8a393acc7",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"OrganisationInvite",
+								"c4e90d0e-962f-41bb-8276-23d8a393acc7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrganisationInvite  - UseOrganisationInvite",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/OrganisationInvite/c4e90d0e-962f-41bb-8276-23d8a393acc7",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"OrganisationInvite",
+								"c4e90d0e-962f-41bb-8276-23d8a393acc7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrganisationInvite  - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/OrganisationInvite/c4e90d0e-962f-41bb-8276-23d8a393acc7",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"OrganisationInvite",
+								"c4e90d0e-962f-41bb-8276-23d8a393acc7"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "PasswordReset",
+			"item": [
+				{
+					"name": "PasswordReset - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"UserAccountId\": \"95bd4941-52eb-48ea-8a31-d326c5824d4c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/PasswordReset",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"PasswordReset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PasswordReset - Read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/PasswordReset/2dec15d4-efea-4ab3-b02f-88e85059ba70",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"PasswordReset",
+								"2dec15d4-efea-4ab3-b02f-88e85059ba70"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PasswordReset - UsePasswordReset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/PasswordReset/2dec15d4-efea-4ab3-b02f-88e85059ba70",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"PasswordReset",
+								"2dec15d4-efea-4ab3-b02f-88e85059ba70"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PasswordReset - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/PasswordReset/2dec15d4-efea-4ab3-b02f-88e85059ba70",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"PasswordReset",
+								"2dec15d4-efea-4ab3-b02f-88e85059ba70"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Level",
+			"item": [
+				{
+					"name": "Level - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"Name\": \"Test Organisation\",\n\t\"Description\": \"An organisation for testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/level/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"level",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Level - Read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/level/0b24c4b8-638c-4b51-ae7f-fbc8beb7b7b7",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"level",
+								"0b24c4b8-638c-4b51-ae7f-fbc8beb7b7b7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Level - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"levelId\": \"0b24c4b8-638c-4b51-ae7f-fbc8beb7b7b7\",\n\t\"Name\": \"Test Level\",\n\t\"Description\": \"A level for testing, updated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/level/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"level",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Level - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/level/0b24c4b8-638c-4b51-ae7f-fbc8beb7b7b7",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"level",
+								"0b24c4b8-638c-4b51-ae7f-fbc8beb7b7b7"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "LevelConfiguration",
+			"item": [
+				{
+					"name": "LevelConfiguration - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"LevelId\": \"0b24c4b8-638c-4b51-ae7f-fbc8beb7b7b7\",\n\t\"OrganisationId\": \"3ab29d49-c707-40e5-b57d-6ccdd8142a4d\",\n\t\"CreatedById\": \"95bd4941-52eb-48ea-8a31-d326c5824d4c\",\n\t\"TargetZoneId\": \"c83655f4-7a6a-4773-9b96-b0f98f20d0d5\",\n\t\"Name\": \"Level Configuration 01\",\n\t\"Description\": \"A test level configuration\",\n\t\"TargetSpawnDelay\": \"1\",\n\t\"TargetLifespan\": \"5\",\n\t\"IsPublic\": \"false\",\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/LevelConfiguration/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"LevelConfiguration",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LevelConfiguration - Read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/LevelConfiguration/4e7cfedf-2067-47cd-97b7-6cdcbb341c85",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"LevelConfiguration",
+								"4e7cfedf-2067-47cd-97b7-6cdcbb341c85"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LevelConfiguration - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"LevelConfigurationId\": \"4e7cfedf-2067-47cd-97b7-6cdcbb341c85\",\n\t\"LevelId\": \"0b24c4b8-638c-4b51-ae7f-fbc8beb7b7b7\",\n\t\"OrganisationId\": \"3ab29d49-c707-40e5-b57d-6ccdd8142a4d\",\n\t\"CreatedById\": \"95bd4941-52eb-48ea-8a31-d326c5824d4c\",\n\t\"TargetZoneId\": \"c83655f4-7a6a-4773-9b96-b0f98f20d0d5\",\n\t\"Name\": \"Level Configuration 02\",\n\t\"Description\": \"A test level configuration, updated\",\n\t\"TargetSpawnDelay\": \"1\",\n\t\"TargetLifespan\": \"5\",\n\t\"IsPublic\": \"false\",\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/LevelConfiguration/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"LevelConfiguration",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LevelConfiguration - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/LevelConfiguration/4e7cfedf-2067-47cd-97b7-6cdcbb341c85",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"LevelConfiguration",
+								"4e7cfedf-2067-47cd-97b7-6cdcbb341c85"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Target Zone",
+			"item": [
+				{
+					"name": "TargetZone - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"TargetZoneShape\": \"Plane\",\n\t\"TargetZoneX\": \"2\",\n\t\"TargetZoneY\": \"2\",\n\t\"TargetZoneZ\": \"2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/targetzone/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"targetzone",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TargetZone - Read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/targetzone/c83655f4-7a6a-4773-9b96-b0f98f20d0d5",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"targetzone",
+								"c83655f4-7a6a-4773-9b96-b0f98f20d0d5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TargetZone - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"TargetZoneId\": \"c83655f4-7a6a-4773-9b96-b0f98f20d0d5\",\n\t\"TargetZoneShape\": \"Plane\",\n\t\"TargetZoneX\": \"3\",\n\t\"TargetZoneY\": \"3\",\n\t\"TargetZoneZ\": \"2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/targetzone/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"targetzone",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TargetZone - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/targetzone/c83655f4-7a6a-4773-9b96-b0f98f20d0d5",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"targetzone",
+								"c83655f4-7a6a-4773-9b96-b0f98f20d0d5"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Target",
+			"item": [
+				{
+					"name": "Target - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"LevelConfigurationId\": \"4e7cfedf-2067-47cd-97b7-6cdcbb341c85\",\n\t\"TargetShape\": \"Cylinder\",\n\t\"TargetX\": \"2\",\n\t\"TargetY\": \"2\",\n\t\"TargetZ\": \"2\",\n\t\"TargetOffsetX\": \"2\",\n\t\"TargetOffsetY\": \"2\",\n\t\"TargetOffsetZ\": \"2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/Target/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"Target",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Target - Read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/Target/195d7609-9115-44cf-8616-d729c31f0b59",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"Target",
+								"195d7609-9115-44cf-8616-d729c31f0b59"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Target - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"targetId\": \"195d7609-9115-44cf-8616-d729c31f0b59\",\n    \"levelConfigurationId\": \"4e7cfedf-2067-47cd-97b7-6cdcbb341c85\",\n    \"targetShape\": \"Cylinder\",\n    \"targetX\": 2.0,\n    \"targetY\": 2.0,\n    \"targetZ\": 2.0,\n    \"offsetX\": 0.5,\n    \"offsetY\": 2.0,\n    \"offsetZ\": 0.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/Target/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"Target",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Target - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/Target/195d7609-9115-44cf-8616-d729c31f0b59",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"Target",
+								"195d7609-9115-44cf-8616-d729c31f0b59"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
